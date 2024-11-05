@@ -1,29 +1,40 @@
-# importing required library 
+# Importing required libraries
 import pandas as pd
 from nltk.corpus import stopwords
 import nltk
+import re
 
-# Downloading stopwords
+# Downloading stopwords if not already downloaded
 nltk.download('stopwords')
 
+# Defining stop words and adding custom stopwords if needed
+stop_words = set(stopwords.words('english'))
+custom_stopwords = {"is", "in"}  # Add any additional stopwords you want to include
+stop_words = stop_words.union(custom_stopwords)
+
 # Loading your dataset
-file_path = 'reddit_data1.csv'
+file_path = 'cleaned_reddit_data.csv'  # Replace with the path to your actual file
 df = pd.read_csv(file_path)
 
-# Defining stop words
-stop_words = set(stopwords.words('english'))
-
-# Function to clean stop words
-def remove_stopwords(text):
-    if isinstance(text, str):  # Check if text is a string to avoid errors with NaN values
+# Function to remove stopwords and clean the text
+def clean_and_remove_stopwords(text):
+    if isinstance(text, str):  # Ensure the input is a string
+        # Convert to lowercase
+        text = text.lower()
+        # Remove non-alphabetic characters (keeping spaces)
+        text = re.sub(r'[^a-z\s]', '', text)
+        # Split the text into words
         words = text.split()
-        cleaned_text = ' '.join(word for word in words if word.lower() not in stop_words)
+        # Filter out stopwords
+        cleaned_words = [word for word in words if word not in stop_words]
+        # Join cleaned words back into a string
+        cleaned_text = ' '.join(cleaned_words)
         return cleaned_text
     return text
 
-# Remove stop words from the 'Comment Body' column
-df['cleaned_comment_body'] = df['Comment Body'].apply(remove_stopwords)
+# Apply the stopword removal function to the 'Comment Body' column
+df['cleaned_comment_body'] = df['Comment Body'].apply(clean_and_remove_stopwords)
 
-# Save the cleaned data to a new CSV
-df.to_csv('cleaned_reddit_data.csv', index=False)
-print("Stop words removed from 'Comment Body' and saved to 'cleaned_reddit_data.csv'")
+# Save the cleaned data to a new CSV file
+df.to_csv('final_cleaned_reddit_data.csv', index=False)
+print("Stop words removed and text cleaned from 'Comment Body'. Saved to 'final_cleaned_reddit_data.csv'.")
