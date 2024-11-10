@@ -2,9 +2,9 @@ import pandas as pd
 import tweepy
 
 # Twitter API Credentials
-api_key = "31MST84iJbbJUZqLwrdggeWJs"
-api_secret = "jBNEshs4h1HHAxEMc1iCMYLoWoPomfbVeWhO5VZowws2fjKHzx"
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAMw%2BwwEAAAAA%2FdECqxX0cBaUVpZMGvD0LvVX5wg%3DPDI7AWotoK6KKIxiqJoXFQUW4414PZWiCnK1IWS0RFDqdyN8q6"
+api_key = "*************"
+api_secret = "*************"
+bearer_token = "*************"
 
 client = tweepy.Client(bearer_token=bearer_token)
 
