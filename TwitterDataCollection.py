@@ -8,6 +8,9 @@ bearer_token = "AAAAAAAAAAAAAAAAAAAAAMw%2BwwEAAAAA%2FdECqxX0cBaUVpZMGvD0LvVX5wg%
 
 client = tweepy.Client(bearer_token=bearer_token)
 
+# =====================================================
+# The approach below retrieves only the most recent tweets at that specific point in time
+# =====================================================
 def fetch_twitter_data(query, max_results=100):
     tweets_data = []
     response = client.search_recent_tweets(query=query, max_results=max_results, tweet_fields=["created_at", "text", "author_id"])
