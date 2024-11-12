@@ -1,36 +1,32 @@
-import nltk
 import pandas as pd
+import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-# Download necessary NLTK packages (if not already installed)
+# Download required NLTK resources
 nltk.download('punkt')
 nltk.download('wordnet')
+nltk.download('omw-1.4')
 
-# Load your DataFrame (replace with your actual file path)
-df = pd.read_csv("reddit_data1.csv")
-column_name = "Comment Body"  # Ensure the column name is correct
+# Load the dataset
+data = pd.read_csv('cleaned_data.csv')
+
+# Fill any missing values in 'cleaned_text' with an empty string
+data['cleaned_text'] = data['cleaned_text'].fillna('')
 
 # Initialize the lemmatizer
 lemmatizer = WordNetLemmatizer()
 
+# Function for tokenization and lemmatization
 def tokenize_and_lemmatize(text):
-    # Ensure the text is a string and handle missing values
-    if isinstance(text, str):
-        # Tokenize the text
-        tokens = word_tokenize(text)
-        
-        # Lemmatize tokens and convert to lowercase
-        lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens if token.isalpha()]
-        return lemmatized_tokens
-    else:
-        return []  # Return an empty list if the text is not a string
+    # Tokenize the text
+    tokens = word_tokenize(text)
+    # Lemmatize each token
+    lemmatized_text = [lemmatizer.lemmatize(token) for token in tokens]
+    return lemmatized_text
 
-# Apply the tokenization and lemmatization function to the specified column
-df['processed_text'] = df[column_name].apply(tokenize_and_lemmatize)
+# Apply the function to the 'cleaned_text' column
+data['lemmatized_text'] = data['cleaned_text'].apply(tokenize_and_lemmatize)
 
-# Optionally, print the DataFrame to check the tokenized and lemmatized text
-print(df.head())  # Print the first few rows to check the result
-
-# Save the output to a new CSV file (optional)
-df.to_csv("processed_reddit_data.csv", index=False)  # Save the processed data to a CSV file
+# Display the results
+print(data[['cleaned_text', 'lemmatized_text']].head())
