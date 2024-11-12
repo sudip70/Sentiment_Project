@@ -51,7 +51,10 @@ def get_tweets(query, count=100):
                 'Query': query,
                 'Tweet': text,
                 'Likes': tweet.public_metrics['like_count'],
-                'Retweets': tweet.public_metrics['retweet_count']
+                'Retweets': tweet.public_metrics['retweet_count'],
+                'URL': tweet_url,
+                'Polarity': polarity,
+                'Sentiment': sentiment
             })
             existing_ids.add(tweet.id)  # Add to existing IDs to avoid duplication
         time.sleep(1)  # Avoid hitting rate limits
