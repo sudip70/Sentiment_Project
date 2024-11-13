@@ -35,6 +35,13 @@ if os.path.isfile(csv_file):
 else:
     existing_ids = set()
 
+# # Function to extract keywords from a URL
+# def extract_keywords_from_url(url):
+#     parsed_url = urlparse(url)
+#     keywords = parsed_url.path.split('/') + list(parse_qs(parsed_url.query).keys())
+#     keywords = [word.lower() for word in keywords if word]  # Clean and lowercase keywords
+#     return keywords
+
 # Keywords that indicate ads, promotions, and job postings
 ad_keywords = ["discount", "offer", "buy now", "promo", "link in bio", "sponsored"]
 job_keywords = ["hiring", "job opening", "apply now", "position available", "join our team"]
@@ -62,6 +69,9 @@ def get_tweets(query, count=30):  # Reduced count per query
         if tweet.id not in existing_ids:  # Only collect new tweets
             tweet_url = f"https://twitter.com/user/status/{tweet.id}"
             text = tweet.text
+            # # Filter out unwanted content
+            # if is_ad_or_unwanted_content(text):
+            #     continue
             polarity = TextBlob(text).sentiment.polarity  # Calculate polarity
             sentiment = "Positive" if polarity > 0 else "Negative" if polarity < 0 else "Neutral"
 
@@ -81,7 +91,13 @@ def get_tweets(query, count=30):  # Reduced count per query
         time.sleep(2)  # Increased delay to avoid hitting rate limits
     return tweets_data
 
+# # Main function to fetch tweets based on keywords extracted from URL
+# def fetch_tweets_from_url(url, tweet_count=30):
+#     keywords = extract_keywords_from_url(url)
+#     print(f"Extracted keywords: {keywords}")
+    
 # Collect tweets for all queries and save incrementally
+# for query in keywords:
 for query in queries:
     print(f"Collecting tweets for query: {query}")
     tweets = get_tweets(query, count=30)  # Adjusted the count per query to manage rate limits
@@ -94,3 +110,7 @@ for query in queries:
         tweets_df.to_csv(csv_file, index=False, mode='a', header=False)  # Append without headers after the first write
 
     print(f"Saved {len(tweets)} new tweets for query '{query}' to CSV.")
+
+# # Example usage
+# url = "https://example.com/healthcare/feedback?query=hospital+experience&topic=patient+satisfaction"
+# fetch_tweets_from_url(url)
