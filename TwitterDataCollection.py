@@ -12,8 +12,9 @@ client = tweepy.Client(bearer_token=bearer_token, wait_on_rate_limit=True)
 
 # Define queries for healthcare feedback
 queries = [
-    "#HealthcareExperience", "#PatientExperience", "#HealthcareFeedback", "healthcare review",
-    "hospital experience", "doctor feedback", "patient satisfaction", "healthcare quality",
+    # "#HealthcareExperience", "#PatientExperience", "#HealthcareFeedback", "healthcare review",
+    # "hospital experience", "doctor feedback",
+    "patient satisfaction", "healthcare quality",
     "treatment outcome", "medical error", "healthcare cost", "mental health services",
     "telemedicine experience", "COVID hospital experience", "#HealthcareSystem"
 ]
@@ -34,8 +35,28 @@ if os.path.isfile(csv_file):
 else:
     existing_ids = set()
 
+# Keywords that indicate ads, promotions, and job postings
+ad_keywords = ["discount", "offer", "buy now", "promo", "link in bio", "sponsored"]
+job_keywords = ["hiring", "job opening", "apply now", "position available", "join our team"]
+
+# Function to filter out ad-like, hashtag-only, retweet, and job post tweets
+def is_ad_or_unwanted_content(tweet_text):
+    # Check if tweet is a retweet
+    if tweet_text.startswith("RT @"):
+        return True
+    # Check for ad or job-related keywords
+    if any(keyword in tweet_text.lower() for keyword in ad_keywords + job_keywords):
+        return True
+    # Exclude tweets with fewer than 5 words (likely less informative)
+    if len(tweet_text.split()) < 5:
+        return True
+    # Exclude tweets that contain mostly hashtags
+    if re.fullmatch(r"(#[\w]+(\s+)?)+" , tweet_text.strip()):
+        return True
+    return False
+
 # Function to collect tweets with polarity and sentiment
-def get_tweets(query, count=100):
+def get_tweets(query, count=30):  # Reduced count per query
     tweets_data = []
     for tweet in tweepy.Paginator(client.search_recent_tweets, query=query, max_results=10, tweet_fields=['created_at', 'public_metrics'], expansions='author_id').flatten(limit=count):
         if tweet.id not in existing_ids:  # Only collect new tweets
@@ -57,19 +78,19 @@ def get_tweets(query, count=100):
                 'Sentiment': sentiment
             })
             existing_ids.add(tweet.id)  # Add to existing IDs to avoid duplication
-        time.sleep(1)  # Avoid hitting rate limits
+        time.sleep(2)  # Increased delay to avoid hitting rate limits
     return tweets_data
 
 # Collect tweets for all queries and save incrementally
 for query in queries:
     print(f"Collecting tweets for query: {query}")
-    tweets = get_tweets(query, count=50)  # Adjust the count per query as needed
-    
+    tweets = get_tweets(query, count=30)  # Adjusted the count per query to manage rate limits
+
     # Convert to DataFrame
     tweets_df = pd.DataFrame(tweets)
-    
+
     # Append new tweets to CSV
     if not tweets_df.empty:
         tweets_df.to_csv(csv_file, index=False, mode='a', header=False)  # Append without headers after the first write
-    
+
     print(f"Saved {len(tweets)} new tweets for query '{query}' to CSV.")
