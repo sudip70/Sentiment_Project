@@ -63,8 +63,8 @@ class data_cleaning:
 
 #Main execution block
 if __name__ == "__main__":
-    file_path = 'C:/Users/lenovo/Documents/projects/training_data/train.csv'
-    output_file = 'C:/Users/lenovo/Documents/projects/training_data/cleaned_data.csv'
+    file_path = 'train.csv'
+    output_file = 'cleaned_data.csv'
     
     #Calling data_cleaning class
     data = data_cleaning(file_path)
