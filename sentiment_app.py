@@ -49,6 +49,7 @@ if uploaded_file is not None:
         # First column for polarity gauge
         with col1:
             st.plotly_chart(fig)
+            
 
         # Second column for sentiment distribution bar chart
         with col2:
