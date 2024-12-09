@@ -1,0 +1,14 @@
+joblib
+streamlit
+nltk
+contractions
+plotly
+pandas
+numpy
+scikit-leanr
+matplotlib
+seabon
+transformers
+tensorflow
+tf-keras
+wordcloud
