@@ -85,7 +85,9 @@ class DataCleaning:
     #Function to clean the text data
     def clean_text(self, text):
         #Lower case
-        text = text.lower()
+        if isinstance(text, float):
+            text = str(text)  # Convert float to string
+        text = text.lower()  # Now it's safe to use lower()
         #Expand
         text = self.expand_contractions(text)
         #Emoji
